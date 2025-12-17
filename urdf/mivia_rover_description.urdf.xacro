@@ -1,0 +1,215 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--
+    mivia_rover: 4-wheel differential rover (4 independently driven wheels)
+    PLACEHOLDER: adapt naming conventions, frames, and ROS 2 control integration as needed.
+  -->
+
+  <xacro:macro name="mivia_rover" params="prefix">
+
+    <!-- ========================= -->
+    <!-- Constants / Parameters    -->
+    <!-- ========================= -->
+
+    <xacro:property name="PI" value="3.1415926535897931"/>
+
+    <!-- Base geometry -->
+    <!-- DONE: set real chassis dimensions (meters) -->
+    <xacro:property name="base_length" value="0.32"/>
+    <xacro:property name="base_width"  value="0.24"/>
+    <xacro:property name="base_height" value="0.10"/>
+
+    <!-- Base mass/inertia -->
+    <!-- PLACEHOLDER: set real mass (kg) and verify inertia with CAD/mesh -->
+    <xacro:property name="base_mass" value="8.0"/>
+
+    <!-- Wheel geometry -->
+    <!-- DONE: set real wheel radius/width (meters) -->
+    <xacro:property name="wheel_radius" value="0.085"/>
+    <xacro:property name="wheel_width"  value="0.08"/>
+
+    <!-- Wheel mass/inertia -->
+    <!-- PLACEHOLDER: set real wheel mass (kg) -->
+    <xacro:property name="wheel_mass" value="0.8"/>
+
+    <!-- Wheel placement relative to base_link -->
+    <!-- Convention: x forward, y left, z up -->
+    <!-- PLACEHOLDER: set wheelbase/track to match your real chassis -->
+    <xacro:property name="wheelbase" value="0.26"/>  <!-- front-to-rear distance -->
+    <xacro:property name="track"     value="0.22"/>  <!-- left-to-right distance -->
+
+    <!-- Vertical placement: wheel centers below base_link -->
+    <!-- PLACEHOLDER: adjust based on where you want base_link (COM vs geometric center) -->
+    <xacro:property name="wheel_z" value="${-(base_height/2.0) + wheel_radius}"/>
+
+    <!-- Joint dynamics -->
+    <!-- PLACEHOLDER: tune damping/friction for sim stability vs realism -->
+    <xacro:property name="wheel_joint_damping" value="0.2"/>
+    <xacro:property name="wheel_joint_friction" value="0.0"/>
+
+    <!-- Joint limits -->
+    <!-- PLACEHOLDER: set realistic effort/velocity for motors (SI units) -->
+    <xacro:property name="wheel_joint_effort" value="20.0"/>
+    <xacro:property name="wheel_joint_velocity" value="20.0"/>
+
+    <!-- ========================= -->
+    <!-- Base Link                 -->
+    <!-- ========================= -->
+
+    <link name="${prefix}base_link">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <!-- PLACEHOLDER: optionally replace with mesh -->
+          <box size="${base_length} ${base_width} ${base_height}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${base_length} ${base_width} ${base_height}"/>
+        </geometry>
+        <!-- PLACEHOLDER: material/color -->
+        <material name="gray"/>
+      </visual>
+
+      <inertial>
+        <!-- PLACEHOLDER: set COM offset if base_link is not COM -->
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${base_mass}"/>
+        <!-- Box inertia around center -->
+        <inertia
+          ixx="${base_mass/12.0 * (base_width*base_width + base_height*base_height)}"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="${base_mass/12.0 * (base_length*base_length + base_height*base_height)}"
+          iyz="0.0"
+          izz="${base_mass/12.0 * (base_length*base_length + base_width*base_width)}"/>
+      </inertial>
+    </link>
+
+    <!-- ========================= -->
+    <!-- Wheel macro (single)      -->
+    <!-- ========================= -->
+    <xacro:macro name="mivia_wheel" params="wheel_link_name">
+      <link name="${wheel_link_name}">
+        <collision>
+          <!-- Cylinder axis is along +Z by default in URDF, rotate to align with wheel axle -->
+          <!-- PLACEHOLDER: verify axis convention with your simulator/control stack -->
+          <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+          <geometry>
+            <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+          </geometry>
+        </collision>
+
+        <visual>
+          <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+          <geometry>
+            <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+          </geometry>
+          <material name="black"/>
+        </visual>
+
+        <inertial>
+          <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+          <mass value="${wheel_mass}"/>
+          <!-- Solid cylinder inertia (about its center) -->
+          <!-- Axis convention: after rotation, izz corresponds to axle; validate for your use -->
+          <inertia
+            ixx="${wheel_mass/12.0 * (3.0*wheel_radius*wheel_radius + wheel_width*wheel_width)}"
+            ixy="0.0"
+            ixz="0.0"
+            iyy="${wheel_mass/12.0 * (3.0*wheel_radius*wheel_radius + wheel_width*wheel_width)}"
+            iyz="0.0"
+            izz="${wheel_mass/2.0 * wheel_radius*wheel_radius}"/>
+        </inertial>
+      </link>
+    </xacro:macro>
+
+    <!-- ========================= -->
+    <!-- 4 Wheels: Links           -->
+    <!-- ========================= -->
+
+    <!-- Naming convention:
+         fl = front-left, fr = front-right, rl = rear-left, rr = rear-right
+         PLACEHOLDER: rename if your code expects different joint names.
+    -->
+    <xacro:mivia_wheel wheel_link_name="${prefix}wheel_fl"/>
+    <xacro:mivia_wheel wheel_link_name="${prefix}wheel_fr"/>
+    <xacro:mivia_wheel wheel_link_name="${prefix}wheel_rl"/>
+    <xacro:mivia_wheel wheel_link_name="${prefix}wheel_rr"/>
+
+    <!-- ========================= -->
+    <!-- 4 Wheel Joints            -->
+    <!-- ========================= -->
+
+    <!-- Wheel positions -->
+    <!-- Front axle at +wheelbase/2, Rear axle at -wheelbase/2
+         Left at +track/2, Right at -track/2
+         PLACEHOLDER: if your coordinate frame uses opposite y convention, swap signs.
+    -->
+
+    <!-- Front-Left -->
+    <joint name="${prefix}wheel_fl_joint" type="continuous">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}wheel_fl"/>
+      <origin xyz="${ wheelbase/2.0} ${ track/2.0} ${wheel_z}" rpy="0 0 0"/>
+      <!-- PLACEHOLDER: axle direction (commonly y for wheels if wheel rolls around y) -->
+      <axis xyz="0 1 0"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+    </joint>
+
+    <!-- Front-Right -->
+    <joint name="${prefix}wheel_fr_joint" type="continuous">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}wheel_fr"/>
+      <origin xyz="${ wheelbase/2.0} ${-track/2.0} ${wheel_z}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+    </joint>
+
+    <!-- Rear-Left -->
+    <joint name="${prefix}wheel_rl_joint" type="continuous">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}wheel_rl"/>
+      <origin xyz="${-wheelbase/2.0} ${ track/2.0} ${wheel_z}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+    </joint>
+
+    <!-- Rear-Right -->
+    <joint name="${prefix}wheel_rr_joint" type="continuous">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}wheel_rr"/>
+      <origin xyz="${-wheelbase/2.0} ${-track/2.0} ${wheel_z}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
+      <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+    </joint>
+
+    <!-- ========================= -->
+    <!-- Optional: base footprint  -->
+    <!-- ========================= -->
+    <!-- PLACEHOLDER: if using Nav2, you often want base_footprint on the ground projection -->
+    <!--
+    <link name="${prefix}base_footprint"/>
+    <joint name="${prefix}base_footprint_joint" type="fixed">
+      <parent link="${prefix}base_footprint"/>
+      <child link="${prefix}base_link"/>
+      <origin xyz="0 0 ${base_height/2.0}" rpy="0 0 0"/>
+    </joint>
+    -->
+
+    <!-- ========================= -->
+    <!-- Optional: sensors frames   -->
+    <!-- ========================= -->
+    <!-- PLACEHOLDER: add imu_link, lidar_link, camera_link, etc. with fixed joints -->
+
+  </xacro:macro>
+
+</robot>
