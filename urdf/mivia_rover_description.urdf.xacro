@@ -35,9 +35,9 @@
 
     <!-- Wheel placement relative to base_link -->
     <!-- Convention: x forward, y left, z up -->
-    <!-- PLACEHOLDER: set wheelbase/track to match your real chassis -->
-    <xacro:property name="wheelbase" value="0.26"/>  <!-- front-to-rear distance -->
-    <xacro:property name="track"     value="0.22"/>  <!-- left-to-right distance -->
+    <!-- DONE: set wheelbase/track to match your real chassis -->
+    <xacro:property name="wheelbase" value="0.216"/>  <!-- front-to-rear distance -->
+    <xacro:property name="track"     value="0.355"/>  <!-- left-to-right distance -->
 
     <!-- Vertical placement: wheel centers below base_link -->
     <!-- PLACEHOLDER: adjust based on where you want base_link (COM vs geometric center) -->
@@ -72,7 +72,7 @@
           <box size="${base_length} ${base_width} ${base_height}"/>
         </geometry>
         <!-- PLACEHOLDER: material/color -->
-        <material name="gray"/>
+        <material name="mivia_gray"/>
       </visual>
 
       <inertial>
@@ -109,7 +109,7 @@
           <geometry>
             <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
           </geometry>
-          <material name="black"/>
+          <material name="mivia_black"/>
         </visual>
 
         <inertial>
