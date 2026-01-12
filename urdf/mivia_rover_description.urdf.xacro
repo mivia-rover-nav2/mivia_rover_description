@@ -5,6 +5,8 @@
     mivia_rover: 4-wheel differential rover (4 independently driven wheels)
     PLACEHOLDER: adapt naming conventions, frames, and ROS 2 control integration as needed.
   -->
+  
+  <xacro:include filename="$(find mivia_rover_description)/urdf/mivia_rover.materials.xacro"/>
 
   <xacro:macro name="mivia_rover" params="prefix">
 

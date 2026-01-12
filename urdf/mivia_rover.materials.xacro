@@ -12,11 +12,11 @@
   </material>
 
   <!-- Optional greys for minor components (future-proofing) -->
-  <material name="mivia_dark_grey">
+  <material name="mivia_dark_gray">
     <color rgba="0.08 0.08 0.08 1.0"/>
   </material>
 
-  <material name="mivia_grey">
+  <material name="mivia_gray">
     <color rgba="0.25 0.25 0.25 1.0"/>
   </material>
 
