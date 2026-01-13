@@ -1,18 +1,9 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!--
-    mivia_rover: 4-wheel differential rover (4 independently driven wheels)
-    PLACEHOLDER: adapt naming conventions, frames, and ROS 2 control integration as needed.
-  -->
-
   <xacro:include filename="$(find mivia_rover_description)/urdf/mivia_rover.materials.xacro"/>
 
   <xacro:macro name="mivia_rover" params="prefix">
-
-    <!-- ========================= -->
-    <!-- Constants / Parameters    -->
-    <!-- ========================= -->
 
     <xacro:property name="PI" value="3.1415926535897931"/>
 
@@ -35,11 +26,12 @@
     <xacro:property name="wheelbase" value="0.216"/>
     <xacro:property name="track"     value="0.355"/>
 
-    <!-- Ground clearance between wheel contact point and chassis bottom -->
+    <!-- Optional clearance of wheel contact point w.r.t. base_footprint -->
     <xacro:property name="ground_clearance" value="0.0"/>
 
-    <!-- base_link is aligned with wheel hubs (axle plane).
-         Wheel centers are placed at z=0 in base_link frame. -->
+    <!-- REQUIREMENT:
+         base_link z-axis plane equals wheel hub plane:
+         wheel centers must be at the same z as base_link => wheel_z = 0 -->
     <xacro:property name="wheel_z" value="0.0"/>
 
     <!-- Joint dynamics -->
@@ -55,7 +47,7 @@
     <!-- ========================= -->
     <link name="${prefix}base_footprint"/>
 
-    <!-- base_link is at wheel hub height above ground -->
+    <!-- base_link at wheel hub height above ground -->
     <joint name="${prefix}base_footprint_joint" type="fixed">
       <parent link="${prefix}base_footprint"/>
       <child  link="${prefix}base_link"/>
@@ -63,19 +55,19 @@
     </joint>
 
     <!-- ========================= -->
-    <!-- Base Link (chassis)       -->
+    <!-- Base Link (chassis box)   -->
     <!-- ========================= -->
+    <!-- Box is centered on base_link => box center z == wheel hub z (in base_link frame). -->
     <link name="${prefix}base_link">
       <collision>
-        <!-- Shift chassis geometry upwards so base_link stays on wheel hub plane -->
-        <origin xyz="0 0 ${base_height/2.0}" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <box size="${base_length} ${base_width} ${base_height}"/>
         </geometry>
       </collision>
 
       <visual>
-        <origin xyz="0 0 ${base_height/2.0}" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <box size="${base_length} ${base_width} ${base_height}"/>
         </geometry>
@@ -83,8 +75,7 @@
       </visual>
 
       <inertial>
-        <!-- Inertial origin aligned with chassis center (same shift as geometry) -->
-        <origin xyz="0 0 ${base_height/2.0}" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <mass value="${base_mass}"/>
         <inertia
           ixx="${base_mass/12.0 * (base_width*base_width + base_height*base_height)}"
@@ -142,7 +133,6 @@
     <!-- 4 Wheel Joints            -->
     <!-- ========================= -->
 
-    <!-- Front-Left -->
     <joint name="${prefix}wheel_fl_joint" type="continuous">
       <parent link="${prefix}base_link"/>
       <child  link="${prefix}wheel_fl"/>
@@ -152,7 +142,6 @@
       <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
     </joint>
 
-    <!-- Front-Right -->
     <joint name="${prefix}wheel_fr_joint" type="continuous">
       <parent link="${prefix}base_link"/>
       <child  link="${prefix}wheel_fr"/>
@@ -162,7 +151,6 @@
       <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
     </joint>
 
-    <!-- Rear-Left -->
     <joint name="${prefix}wheel_rl_joint" type="continuous">
       <parent link="${prefix}base_link"/>
       <child  link="${prefix}wheel_rl"/>
@@ -172,7 +160,6 @@
       <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
     </joint>
 
-    <!-- Rear-Right -->
     <joint name="${prefix}wheel_rr_joint" type="continuous">
       <parent link="${prefix}base_link"/>
       <child  link="${prefix}wheel_rr"/>
