@@ -17,12 +17,6 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
-# Install meshes (visual + collision)
-install(
-  DIRECTORY meshes
-  DESTINATION share/${PROJECT_NAME}
-)
-
 # Install RViz configurations
 install(
   DIRECTORY rviz
