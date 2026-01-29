@@ -2,6 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="$(find mivia_rover_description)/urdf/mivia_rover.materials.xacro"/>
+  <xacro:include filename="$(find zed_wrapper)/urdf/zed_descr.urdf.xacro"/>
 
   <xacro:macro name="mivia_rover" params="prefix">
 
@@ -11,6 +12,16 @@
     <xacro:property name="base_length" value="0.32"/>
     <xacro:property name="base_width"  value="0.24"/>
     <xacro:property name="base_height" value="0.10"/>
+
+    <!-- Sensor box geometry -->
+    <xacro:property name="sensor_box_length" value="0.21"/>
+    <xacro:property name="sensor_box_width"  value="0.17"/>
+    <xacro:property name="sensor_box_height" value="0.075"/>
+    <!-- 
+      base_sensor_box_offset_z:
+      Vertical space between the base (base_link) and the sensor box along the Z axis.
+    -->
+    <xacro:property name="base_sensor_box_offset_z" value="0.024"/>
 
     <!-- Base mass/inertia -->
     <xacro:property name="base_mass" value="8.0"/>
@@ -167,6 +178,47 @@
       <axis xyz="0 1 0"/>
       <dynamics damping="${wheel_joint_damping}" friction="${wheel_joint_friction}"/>
       <limit effort="${wheel_joint_effort}" velocity="${wheel_joint_velocity}"/>
+    </joint>
+
+
+    <!-- ========================= -->
+    <!-- Sensor Box Link   -->
+    <!-- ========================= -->
+    <link name="${prefix}sensor_box_link">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${sensor_box_length} ${sensor_box_width} ${sensor_box_height}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${sensor_box_length} ${sensor_box_width} ${sensor_box_height}"/>
+        </geometry>
+        <material name="mivia_gray"/>
+      </visual>
+    </link>
+
+    <!-- ========================= -->
+    <!-- Sensor Box joint   -->
+    <!-- ========================= -->
+
+    <joint name="${prefix}sensor_box_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}sensor_box_link"/>
+      <origin xyz="0 0 ${base_height/2 + sensor_box_height/2 + base_sensor_box_offset_z}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- ========================= -->
+    <!-- Camera Joint   -->
+    <!-- ========================= -->
+
+    <joint name="${prefix}camera_joint" type="fixed">
+      <parent link="${prefix}sensor_box_link"/>
+      <child  link="zed_camera_link"/>
+      <origin xyz="0 0 ${sensor_box_height/2}" rpy="0 0 0"/>
     </joint>
 
   </xacro:macro>
