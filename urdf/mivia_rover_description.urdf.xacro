@@ -23,6 +23,11 @@
     -->
     <xacro:property name="base_sensor_box_offset_z" value="0.024"/>
 
+    <!-- Uwb geometry -->
+    <xacro:property name="uwb_length" value="0.023"/>
+    <xacro:property name="uwb_width"  value="0.048"/>
+    <xacro:property name="uwb_height" value="0.094"/>
+
     <!-- Base mass/inertia -->
     <xacro:property name="base_mass" value="8.0"/>
 
@@ -184,6 +189,7 @@
     <!-- ========================= -->
     <!-- Sensor Box Link   -->
     <!-- ========================= -->
+
     <link name="${prefix}sensor_box_link">
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -201,6 +207,7 @@
       </visual>
     </link>
 
+
     <!-- ========================= -->
     <!-- Sensor Box joint   -->
     <!-- ========================= -->
@@ -211,6 +218,7 @@
       <origin xyz="0 0 ${base_height/2 + sensor_box_height/2 + base_sensor_box_offset_z}" rpy="0 0 0"/>
     </joint>
 
+
     <!-- ========================= -->
     <!-- Camera Joint   -->
     <!-- ========================= -->
@@ -219,6 +227,39 @@
       <parent link="${prefix}sensor_box_link"/>
       <child  link="zed_camera_link"/>
       <origin xyz="0 0 ${sensor_box_height/2}" rpy="0 0 0"/>
+    </joint>
+
+
+    <!-- ========================= -->
+    <!-- Uwb Link   -->
+    <!-- ========================= -->
+
+    <link name="${prefix}uwb_link">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${uwb_length} ${uwb_width} ${uwb_height}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${uwb_length} ${uwb_width} ${uwb_height}"/>
+        </geometry>
+        <material name="mivia_gray"/>
+      </visual>
+    </link>
+
+
+    <!-- ========================= -->
+    <!-- Uwb joint   -->
+    <!-- ========================= -->
+
+    <joint name="${prefix}uwb_joint" type="fixed">
+      <parent link="${prefix}sensor_box_link"/>
+      <child  link="${prefix}uwb_link"/>
+      <origin xyz="0.10 0 ${sensor_box_height/2 + uwb_height/2}" rpy="0 0 0"/>
     </joint>
 
   </xacro:macro>
