@@ -226,7 +226,7 @@
     <joint name="${prefix}camera_joint" type="fixed">
       <parent link="${prefix}sensor_box_link"/>
       <child  link="zed_camera_link"/>
-      <origin xyz="0 0 ${sensor_box_height/2}" rpy="0 0 0"/>
+      <origin xyz="${sensor_box_length/2 - 0.016} 0 ${sensor_box_height/2}" rpy="0 0 0"/>
     </joint>
 
 
@@ -239,6 +239,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <box size="${uwb_length} ${uwb_width} ${uwb_height}"/>
+          
         </geometry>
       </collision>
 
@@ -259,7 +260,7 @@
     <joint name="${prefix}uwb_joint" type="fixed">
       <parent link="${prefix}sensor_box_link"/>
       <child  link="${prefix}uwb_link"/>
-      <origin xyz="0.10 0 ${sensor_box_height/2 + uwb_height/2}" rpy="0 0 0"/>
+      <origin xyz="${sensor_box_length/2 + uwb_length/2} ${sensor_box_width/2 + uwb_width/2 - 0.0661} 0" rpy="0 0 0"/>
     </joint>
 
   </xacro:macro>
