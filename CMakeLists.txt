@@ -17,6 +17,12 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+# Install sensor calibration config
+install(
+  DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
+)
+
 # Install RViz configurations
 install(
   DIRECTORY rviz

@@ -4,6 +4,13 @@
   <xacro:include filename="$(find mivia_rover_description)/urdf/mivia_rover.materials.xacro"/>
   <xacro:include filename="$(find zed_wrapper)/urdf/zed_descr.urdf.xacro"/>
 
+  <!-- Sensor extrinsics (position/orientation of sensor_box, camera, uwb, imu).
+       Kept in a separate yaml so they can be re-measured/tuned without
+       touching URDF syntax. Override config_dir to point at a different
+       calibration directory (e.g. per-unit calibration) if ever needed. -->
+  <xacro:arg name="config_dir" default="$(find mivia_rover_description)"/>
+  <xacro:property name="calibration" value="${xacro.load_yaml('$(arg config_dir)/config/sensors_calibration.yaml')}"/>
+
   <xacro:macro name="mivia_rover" params="prefix">
 
     <xacro:property name="PI" value="3.1415926535897931"/>
@@ -17,11 +24,6 @@
     <xacro:property name="sensor_box_length" value="0.21"/>
     <xacro:property name="sensor_box_width"  value="0.17"/>
     <xacro:property name="sensor_box_height" value="0.075"/>
-    <!-- 
-      base_sensor_box_offset_z:
-      Vertical space between the base (base_link) and the sensor box along the Z axis.
-    -->
-    <xacro:property name="base_sensor_box_offset_z" value="0.024"/>
 
     <!-- Uwb geometry -->
     <xacro:property name="uwb_length" value="0.023"/>
@@ -215,52 +217,55 @@
     <joint name="${prefix}sensor_box_joint" type="fixed">
       <parent link="${prefix}base_link"/>
       <child  link="${prefix}sensor_box_link"/>
-      <origin xyz="0 0 ${base_height/2 + sensor_box_height/2 + base_sensor_box_offset_z}" rpy="0 0 0"/>
+      <origin
+        xyz="${calibration['base_link2sensor_box']['x']} ${calibration['base_link2sensor_box']['y']} ${calibration['base_link2sensor_box']['z']}"
+        rpy="${calibration['base_link2sensor_box']['roll']} ${calibration['base_link2sensor_box']['pitch']} ${calibration['base_link2sensor_box']['yaw']}"/>
     </joint>
 
 
     <!-- ========================= -->
-    <!-- Camera Joint   -->
+    <!-- Camera Link + Joint       -->
     <!-- ========================= -->
+
+    <link name="zed_camera_link"/>
 
     <joint name="${prefix}camera_joint" type="fixed">
       <parent link="${prefix}sensor_box_link"/>
       <child  link="zed_camera_link"/>
-      <origin xyz="${sensor_box_length/2 - 0.016} 0 ${sensor_box_height/2}" rpy="0 0 0"/>
+      <origin
+        xyz="${calibration['sensor_box2zed_camera']['x']} ${calibration['sensor_box2zed_camera']['y']} ${calibration['sensor_box2zed_camera']['z']}"
+        rpy="${calibration['sensor_box2zed_camera']['roll']} ${calibration['sensor_box2zed_camera']['pitch']} ${calibration['sensor_box2zed_camera']['yaw']}"/>
     </joint>
 
 
     <!-- ========================= -->
-    <!-- Uwb Link   -->
+    <!-- Uwb Link + Joint          -->
     <!-- ========================= -->
 
-    <link name="${prefix}uwb_link">
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="${uwb_length} ${uwb_width} ${uwb_height}"/>
-          
-        </geometry>
-      </collision>
-
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="${uwb_length} ${uwb_width} ${uwb_height}"/>
-        </geometry>
-        <material name="mivia_gray"/>
-      </visual>
-    </link>
-
-
-    <!-- ========================= -->
-    <!-- Uwb joint   -->
-    <!-- ========================= -->
+    <link name="${prefix}uwb_link"/>
 
     <joint name="${prefix}uwb_joint" type="fixed">
       <parent link="${prefix}sensor_box_link"/>
       <child  link="${prefix}uwb_link"/>
-      <origin xyz="${sensor_box_length/2 + uwb_length/2} ${sensor_box_width/2 + uwb_width/2 - 0.0661} 0" rpy="0 0 0"/>
+      <origin
+        xyz="${calibration['sensor_box2uwb']['x']} ${calibration['sensor_box2uwb']['y']} ${calibration['sensor_box2uwb']['z']}"
+        rpy="${calibration['sensor_box2uwb']['roll']} ${calibration['sensor_box2uwb']['pitch']} ${calibration['sensor_box2uwb']['yaw']}"/>
+    </joint>
+
+
+    <!-- ========================= -->
+    <!-- Imu (Xsens MTi-8) Link + Joint -->
+    <!-- ========================= -->
+    <!-- xsens_mti_node.yaml must keep frame_id == "imu_link" (its default) for this to line up. -->
+
+    <link name="${prefix}imu_link"/>
+
+    <joint name="${prefix}imu_joint" type="fixed">
+      <parent link="${prefix}sensor_box_link"/>
+      <child  link="${prefix}imu_link"/>
+      <origin
+        xyz="${calibration['sensor_box2imu']['x']} ${calibration['sensor_box2imu']['y']} ${calibration['sensor_box2imu']['z']}"
+        rpy="${calibration['sensor_box2imu']['roll']} ${calibration['sensor_box2imu']['pitch']} ${calibration['sensor_box2imu']['yaw']}"/>
     </joint>
 
   </xacro:macro>

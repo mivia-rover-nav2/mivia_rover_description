@@ -1,0 +1,39 @@
+# Sensor extrinsics for mivia_rover_description/urdf/mivia_rover_description.urdf.xacro.
+#
+# Values are in meters / radians. Kept separate from the xacro so they can be
+# re-measured/tuned without touching URDF syntax.
+
+base_link2sensor_box:
+  x: 0.0
+  y: 0.0
+  z: 0.1115
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
+
+sensor_box2zed_camera:
+  x: 0.089
+  y: 0.0
+  z: 0.0375
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
+
+sensor_box2uwb:
+  x: 0.1165
+  y: 0.0429
+  z: 0.0
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
+
+# TODO: placeholder, not measured from the real mounting position/orientation
+# of the Xsens MTi-8. xsens_mti_node.yaml must keep frame_id == "imu_link"
+# (its default) for this to line up.
+sensor_box2imu:
+  x: 0.0
+  y: -0.106
+  z: 0.0
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
