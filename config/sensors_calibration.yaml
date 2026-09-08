@@ -37,3 +37,14 @@ sensor_box2imu:
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
+
+# TODO: placeholder, not measured from the real mounting position/orientation
+# of the Velodyne VLP-16. velodyne_vlp16.yaml (mivia_rover_sensing_bringup)
+# must keep frame_id == "velodyne" for this to line up.
+sensor_box2velodyne:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0

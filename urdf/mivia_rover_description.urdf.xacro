@@ -268,6 +268,23 @@
         rpy="${calibration['sensor_box2imu']['roll']} ${calibration['sensor_box2imu']['pitch']} ${calibration['sensor_box2imu']['yaw']}"/>
     </joint>
 
+
+    <!-- ========================= -->
+    <!-- Velodyne VLP-16 Link + Joint -->
+    <!-- ========================= -->
+    <!-- velodyne_vlp16.yaml (mivia_rover_sensing_bringup) must keep
+         frame_id == "velodyne" for the point cloud to line up with this link. -->
+
+    <link name="${prefix}velodyne"/>
+
+    <joint name="${prefix}velodyne_joint" type="fixed">
+      <parent link="${prefix}sensor_box_link"/>
+      <child  link="${prefix}velodyne"/>
+      <origin
+        xyz="${calibration['sensor_box2velodyne']['x']} ${calibration['sensor_box2velodyne']['y']} ${calibration['sensor_box2velodyne']['z']}"
+        rpy="${calibration['sensor_box2velodyne']['roll']} ${calibration['sensor_box2velodyne']['pitch']} ${calibration['sensor_box2velodyne']['yaw']}"/>
+    </joint>
+
   </xacro:macro>
 
 </robot>
