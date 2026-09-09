@@ -2,7 +2,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="$(find mivia_rover_description)/urdf/mivia_rover.materials.xacro"/>
-  <xacro:include filename="$(find zed_wrapper)/urdf/zed_descr.urdf.xacro"/>
 
   <!-- Sensor extrinsics (position/orientation of sensor_box, camera, uwb, imu).
        Kept in a separate yaml so they can be re-measured/tuned without
