@@ -28,25 +28,28 @@ sensor_box2uwb:
   pitch: 0.0
   yaw: 0.0
 
-# TODO: placeholder, not measured from the real mounting position/orientation
-# of the Xsens MTi-8. xsens_mti_node.yaml must keep frame_id == "imu_link"
-# (its default) for this to line up.
+# From the sensor box CAD (Rover_Case_2.step): center of the MTi 1-series
+# module on the MTi-8 board, module axes aligned with the rover axes.
+# xsens_mti_node.yaml must keep frame_id == "imu_link" (its default) for
+# this to line up.
 sensor_box2imu:
-  x: 0.0
-  y: -0.106
-  z: 0.0
+  x: 0.0929
+  y: -0.0023
+  z: -0.0480
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
 
-# TODO: placeholder, not measured from the real mounting position/orientation
-# of the Velodyne VLP-16 inside the lidar turret (origin = turret center).
+# From the sensor box CAD (Rover_Case_2.step): the turret is the VLP-16
+# itself, but the turret center is offset by the rear connector bulge.
+# Velodyne origin = rotation axis, 37.7 mm above the sensor base (VLP-16
+# manual); cable at the rear, so the sensor faces forward (yaw 0).
 # velodyne_vlp16.yaml (mivia_rover_sensing_bringup) must keep
 # frame_id == "velodyne" for this to line up.
 lidar_turret2velodyne:
-  x: 0.0
+  x: 0.0060
   y: 0.0
-  z: 0.0
+  z: 0.0014
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
