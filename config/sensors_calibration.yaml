@@ -28,8 +28,9 @@ sensor_box2uwb:
   pitch: 0.0
   yaw: 0.0
 
-# From the sensor box CAD (Rover_Case_2.step): center of the MTi 1-series
-# module on the MTi-8 board, module axes aligned with the rover axes.
+# Position from the sensor box CAD (Rover_Case_2.step): center of the MTi
+# 1-series module on the MTi-8 board. Orientation from a tilt test on the
+# rover: sensor +Y points forward, +X to the right, +Z up (yaw -90 deg).
 # xsens_mti_node.yaml must keep frame_id == "imu_link" (its default) for
 # this to line up.
 sensor_box2imu:
@@ -38,7 +39,7 @@ sensor_box2imu:
   z: -0.0480
   roll: 0.0
   pitch: 0.0
-  yaw: 0.0
+  yaw: -1.5708
 
 # From the sensor box CAD (Rover_Case_2.step): the turret is the VLP-16
 # itself, but the turret center is offset by the rear connector bulge.
