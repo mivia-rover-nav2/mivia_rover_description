@@ -3,26 +3,27 @@
 # Values are in meters / radians. Kept separate from the xacro so they can be
 # re-measured/tuned without touching URDF syntax.
 
+# z = base_height/2 + sensor_box_height/2 + 0.0165 (gap between base and box)
 base_link2sensor_box:
   x: 0.0
   y: 0.0
-  z: 0.1115
+  z: 0.13725
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
 
 sensor_box2zed_camera:
-  x: 0.089
+  x: 0.1515
   y: 0.0
-  z: 0.0375
+  z: -0.0209
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
 
 sensor_box2uwb:
-  x: 0.1165
-  y: 0.0429
-  z: 0.0
+  x: 0.1177
+  y: -0.0006
+  z: 0.0337
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
@@ -39,9 +40,10 @@ sensor_box2imu:
   yaw: 0.0
 
 # TODO: placeholder, not measured from the real mounting position/orientation
-# of the Velodyne VLP-16. velodyne_vlp16.yaml (mivia_rover_sensing_bringup)
-# must keep frame_id == "velodyne" for this to line up.
-sensor_box2velodyne:
+# of the Velodyne VLP-16 inside the lidar turret (origin = turret center).
+# velodyne_vlp16.yaml (mivia_rover_sensing_bringup) must keep
+# frame_id == "velodyne" for this to line up.
+lidar_turret2velodyne:
   x: 0.0
   y: 0.0
   z: 0.0
