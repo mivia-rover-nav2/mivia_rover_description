@@ -3,19 +3,25 @@
 # Values are in meters / radians. Kept separate from the xacro so they can be
 # re-measured/tuned without touching URDF syntax.
 
-# z = base_height/2 + sensor_box_height/2 + 0.0165 (gap between base and box)
+# z measured on the rover (flat floor, lid fixed) by fitting the floor plane
+# in the Velodyne (303.9 mm) and ZED left camera (176.2 mm) point clouds; the
+# two estimates agree within 2 mm (0.1187 / 0.1204), this is their mean. It
+# includes the ~16 mm gap between chassis lid and sensor box, which the CAD
+# (Rover_Case.step) does not model, so do not derive this value from the CAD.
 base_link2sensor_box:
   x: 0.0
   y: 0.0
-  z: 0.13725
+  z: 0.1195
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
 
+# zed_camera_link is the bottom of the camera body (zed_wrapper puts the
+# camera center height/2 = 15 mm above it), not its center.
 sensor_box2zed_camera:
   x: 0.1515
   y: 0.0
-  z: -0.0209
+  z: -0.0359
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
