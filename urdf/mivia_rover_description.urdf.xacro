@@ -318,6 +318,23 @@
         rpy="${calibration['lidar_turret2velodyne']['roll']} ${calibration['lidar_turret2velodyne']['pitch']} ${calibration['lidar_turret2velodyne']['yaw']}"/>
     </joint>
 
+
+    <!-- ========================= -->
+    <!-- GNSS antenna Link + Joint -->
+    <!-- ========================= -->
+    <!-- uwb_gnss_alignment_node (mivia_rover_localization) republishes the
+         Xsens GNSS fix with frame_id == "gnss_antenna" for this to line up. -->
+
+    <link name="${prefix}gnss_antenna"/>
+
+    <joint name="${prefix}gnss_antenna_joint" type="fixed">
+      <parent link="${prefix}sensor_box_link"/>
+      <child  link="${prefix}gnss_antenna"/>
+      <origin
+        xyz="${calibration['sensor_box2gnss_antenna']['x']} ${calibration['sensor_box2gnss_antenna']['y']} ${calibration['sensor_box2gnss_antenna']['z']}"
+        rpy="${calibration['sensor_box2gnss_antenna']['roll']} ${calibration['sensor_box2gnss_antenna']['pitch']} ${calibration['sensor_box2gnss_antenna']['yaw']}"/>
+    </joint>
+
   </xacro:macro>
 
 </robot>

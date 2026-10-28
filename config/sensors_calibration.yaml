@@ -60,3 +60,17 @@ lidar_turret2velodyne:
   roll: 0.0
   pitch: 0.0
   yaw: 0.0
+
+# From the full rover CAD (Rover_Case.step): Xsens ANT-GNSS-RTK (44 x 18 mm)
+# in its holder on the sensor box lid, rear-left of the Velodyne. Origin =
+# estimated phase center, mid-dome (9 mm above the antenna base). The Xsens
+# GNSS fix on /gnss is the antenna position; uwb_gnss_alignment_node
+# republishes it with frame_id == "gnss_antenna" so that navsat_transform_node
+# moves it to base_link through this link.
+sensor_box2gnss_antenna:
+  x: -0.0716
+  y: 0.0560
+  z: 0.0818
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
