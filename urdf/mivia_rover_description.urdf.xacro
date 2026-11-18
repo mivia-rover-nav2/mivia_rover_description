@@ -2,7 +2,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="$(find mivia_rover_description)/urdf/mivia_rover.materials.xacro"/>
-  <xacro:include filename="$(find zed_wrapper)/urdf/zed_descr.urdf.xacro"/>
 
   <xacro:macro name="mivia_rover" params="prefix">
 
@@ -216,17 +215,6 @@
       <parent link="${prefix}base_link"/>
       <child  link="${prefix}sensor_box_link"/>
       <origin xyz="0 0 ${base_height/2 + sensor_box_height/2 + base_sensor_box_offset_z}" rpy="0 0 0"/>
-    </joint>
-
-
-    <!-- ========================= -->
-    <!-- Camera Joint   -->
-    <!-- ========================= -->
-
-    <joint name="${prefix}camera_joint" type="fixed">
-      <parent link="${prefix}sensor_box_link"/>
-      <child  link="zed_camera_link"/>
-      <origin xyz="${sensor_box_length/2 - 0.016} 0 ${sensor_box_height/2}" rpy="0 0 0"/>
     </joint>
 
 
